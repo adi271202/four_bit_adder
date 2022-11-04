@@ -1,0 +1,43 @@
+module top_module ();
+    reg [3:0]t_a,t_b;
+    reg t_c;
+    wire [3:0]t_s;
+    wire t_cout;
+    
+    four_bit_adder FA(t_s,t_cout,t_a,t_b,t_c);
+    
+    initial begin
+        $monitor("time=%d  A=%b  B=%b  C_in=%b  S=%b  C_out=%b",$time,t_a,t_b,t_c,t_s,t_cout);
+    end
+    initial begin
+        t_a=0; t_b=0; t_c=0;
+        #5 t_a=4'd1; t_b=4'd0; t_c=1'd0;
+        #5 t_a=4'd5; t_b=4'd1; t_c=1'd0;
+          #5 t_a=4'd3; t_b=4'd1; t_c=1'd0;
+          #5 t_a=4'd1; t_b=4'd4; t_c=1'd1;
+          #5 t_a=4'd8; t_b=4'd9; t_c=1'd1;
+        #10 $finish;
+    end
+endmodule
+
+module full_adder(s,c_out,a,b,c_in);
+    input a,b,c_in;
+    output reg s,c_out;
+   always @(a,b,c_in)
+        begin 
+            s=a^b^c_in;
+            c_out=a&b|b&c_in|a&c_in;
+        end
+endmodule
+
+module four_bit_adder(S,C_out,A,B,C_in);
+    input [3:0]A,B;
+    input C_in;
+    output [3:0]S;
+    output C_out;
+    wire c1,c2,c3;
+    full_adder fa0(S[0],c1,A[0],B[0],C_in);
+    full_adder fa1(S[1],c2,A[1],B[1],c1);
+    full_adder fa2(S[2],c3,A[2],B[2],c2);
+    full_adder fa3(S[3],C_out,A[3],B[3],c3);
+endmoduleS
